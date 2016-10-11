@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">labo2</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="test">Hello blank fragment</string>
+    <string name="test2">dit is een tweede blok</string>
+</resources>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">QuizApp</string>
+    <string name="question">In which year did Henry VIII become King of England?</string>
+    <string name="hint">fill a year</string>
+    <string name="submitTxt">OK</string>
+    <string name="hintBTN">Hint</string>
+    <string name="hintQuestion">Are you sure you want to see the hint?</string>
+    <string name="okhint">Yes</string>
+    <string name="nohint">No</string>
+</resources>
