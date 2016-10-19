@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Traffic Alerts</string>
+    <string name="type">Type:</string>
+    <string name="message">Message:</string>
+    <string name="id">Id:</string>
+    <string name="source">Source:</string>
+    <string name="transport">Transport:</string>
+    <string name="alarm_name">Alarm name:</string>
+    <string name="longitude">Longitude:</string>
+    <string name="timestamp">Timestamp:</string>
+    <string name="latitude">Latitude:</string>
+    <string name="placeholder"><![CDATA[<placeholder for text view with varying width.>]]></string>
+</resources>
