@@ -1,20 +1,29 @@
 package be.ugent.oomt.newsfeed;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import be.ugent.oomt.newsfeed.content.CustomContentProvider;
+import be.ugent.oomt.newsfeed.content.database.DatabaseContract;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link DetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-//TODO: implement LoaderManager.LoaderCallbacks<Cursor>
-public class DetailFragment extends Fragment {
 
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  {
+    private static final int LOADER_ID = 41;
     // the fragment initialization parameters
     public static final String ARG_ITEM_ID = "item_id";
 
@@ -49,7 +58,14 @@ public class DetailFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString(ARG_ITEM_ID, itemId);
         fragment.setArguments(args);
+
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getLoaderManager().initLoader(LOADER_ID,null,this);
     }
 
     @Override
@@ -70,6 +86,46 @@ public class DetailFragment extends Fragment {
         timestampView = (TextView) view.findViewById(R.id.timestamp);
 
         return view;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if(id!=LOADER_ID){
+            return null;
+        }
+        //return new cursorloader
+
+
+        Log.d("NOTICE","Creating a cursorloader object ID=" + this.getItemId());
+        return new CursorLoader(
+                getActivity(),
+                CustomContentProvider.ITEMS_CONTENT_URL,
+                new String[]{"*"},
+                DatabaseContract.Item.COLUMN_NAME_ID+"=?",
+                new String[]{getItemId()},
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        data.moveToFirst();
+
+        itemIdView.setText(data.getString(0));
+        titleView.setText(data.getString(6));
+        typeView.setText(data.getString(3));
+        messageView.setText(data.getString(6));
+        transportView.setText(data.getString(4));;
+        longitudeView.setText(data.getString(7));
+        latitudeView.setText(data.getString(8));
+        sourceView.setText(data.getString(2));
+        alarmNameView.setText(data.getString(5));
+        timestampView.setText(data.getString(9));
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     //TODO: override LoaderManager.LoaderCallbacks<Cursor> methods

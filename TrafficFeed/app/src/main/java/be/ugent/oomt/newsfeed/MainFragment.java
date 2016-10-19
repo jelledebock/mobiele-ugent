@@ -3,19 +3,18 @@ package be.ugent.oomt.newsfeed;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import be.ugent.oomt.newsfeed.content.CustomContentProvider;
 import be.ugent.oomt.newsfeed.content.database.DatabaseContract;
-import be.ugent.oomt.newsfeed.content.database.DbHelper;
 
 /**
  * A simple {@link ListFragment} subclass.
@@ -27,7 +26,8 @@ import be.ugent.oomt.newsfeed.content.database.DbHelper;
 public class MainFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private OnFragmentInteractionListener mListener;
-    private static final int URL_LOADER = 0;
+    private static final int LOADER_ID = 41;
+    private CursorAdapter arrayAdapter;
 
     public MainFragment() {
         // Required empty public constructor
@@ -38,12 +38,48 @@ public class MainFragment extends ListFragment implements LoaderManager.LoaderCa
         super.onCreate(savedInstanceState);
 
         //TODO: change ArrayAdapter to a SimpleCursorAdapter with the appropriate parameters
-        getLoaderManager().initLoader(URL_LOADER, null, this);
-        CustomContentProvider provider = new CustomContentProvider();
+        String from[] = {DatabaseContract.Item.COLUMN_NAME_SOURCE , DatabaseContract.Item.COLUMN_NAME_MESSAGE};
+        int to[] = {android.R.id.text1, android.R.id.text2};
+        arrayAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_activated_2,null,from,to,0);
+        getLoaderManager().initLoader(LOADER_ID, null,this);
+    }
 
-        SimpleCursorAdapter arrayAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_activated_2,
-                null,null,null,0);
-        setListAdapter(arrayAdapter);
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if(id!=LOADER_ID){
+            return null;
+        }
+        String [] projection = {"*"};
+        //return new cursorloader
+
+
+        Log.d("NOTICE","Creating a cursorloader object");
+        return new CursorLoader(
+                getActivity(),
+                CustomContentProvider.ITEMS_CONTENT_URL,
+                new String[]{"*"},
+                DatabaseContract.Item.COLUMN_NAME_ID + " IS NOT NULL",
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(loader.getId()==LOADER_ID){
+            data.moveToFirst();
+            Log.d("Notice","Swapping the listview's cursorloader");
+            Log.d("Notice","First row "+data.getColumnName(0));
+            Log.d("Notice","First row "+data.getColumnName(1));
+            Log.d("Notice","Number of matches "+data.getCount());
+
+            arrayAdapter.swapCursor(data);
+            setListAdapter(arrayAdapter);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        arrayAdapter.swapCursor(null);
     }
 
     //TODO: override the LoaderManager.LoaderCallbacks<Cursor> methods
@@ -67,34 +103,6 @@ public class MainFragment extends ListFragment implements LoaderManager.LoaderCa
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         mListener.onListItemClick(l,v,position,id);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String [] projection = {"*"};
-        switch(id){
-            case URL_LOADER:
-                //return new cursorloader
-                return new CursorLoader(
-                        getActivity(),
-                        CustomContentProvider.ITEMS_CONTENT_URL,
-                        projection,
-                        DatabaseContract.Item.COLUMN_NAME_ID+"=",
-                        args.getStringArray()
-
-                )
-        }
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 
     /**
