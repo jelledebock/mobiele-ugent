@@ -1,10 +1,8 @@
 package be.ugent.oomt.newsfeed;
 
-import android.app.Service;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +11,7 @@ import android.widget.ListView;
 import java.util.Locale;
 
 import be.ugent.oomt.newsfeed.content.CustomContentProvider;
+import be.ugent.oomt.newsfeed.service.PullService;
 
 public class MainActivity extends AppCompatActivity implements MainFragment.OnFragmentInteractionListener {
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         mDuelPane = detailsFrame != null && detailsFrame.getVisibility() == View.VISIBLE;
 
         //TODO: start service
-        startService(new Intent(this, CustomContentProvider.class));
+        startService(new Intent(this, PullService.class));
     }
 
     @Override
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         Log.d(TAG, "onDestroy()");
         //TODO: stop service when application is shutting down
         if(super.isFinishing()){
-            stopService(new Intent(this, CustomContentProvider.class));
+            stopService(new Intent(this, PullService.class));
         }
         super.onStop();
     }
@@ -53,5 +52,14 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     public void onListItemClick(ListView l, View v, int position, long id) {
         Log.d(TAG, String.format(Locale.getDefault(), "Position: %d, id: %d", position, id));
         //TODO: open detail activity in portrait or replace fragment in landscape
+        if(getResources().getConfiguration().orientation== Configuration.ORIENTATION_LANDSCAPE){
+            DetailFragment details = DetailFragment.newInstance(String.valueOf(id));
+            getSupportFragmentManager().beginTransaction().replace(R.id.detail_container, details).commit();
+        }
+        else{
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra("item_id",String.valueOf(id));
+            startActivity(intent);
+        }
     }
 }
