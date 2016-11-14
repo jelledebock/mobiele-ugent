@@ -66,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void scanLeDevice() {
         //Check permissions
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                 MY_PERMISSIONS_REQUEST_LOCATION);
 
         mBluetoothAdapter.getBluetoothLeScanner().startScan(mLeScanCallback);

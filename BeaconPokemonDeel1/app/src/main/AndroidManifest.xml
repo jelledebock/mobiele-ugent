@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="be.ugent.tiwi.oomt.beaconpokemondeel1">
+
+    <!-- Deze permissies zijn nodig voor Bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!--
+    Deze is nodig om te scannen naar BLE devices. Dit is een dangerous permission dus deze moet
+    ook at runtime aangevraagd worden
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Deze tag geeft aan dat BLE vereist is om de app te kunnen installeren -->
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- Deze activity bevat de code voor stap 1 -->
+        <activity android:name=".BluetoothScanActivity">
+
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
+
+        <!-- In stap 2 verplaatsen we de code naar een backgroundservice -->
+        <activity android:name=".StartServiceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".ScanService"
+            android:enabled="true"
+            android:exported="true"></service>
+    </application>
+
+</manifest>
